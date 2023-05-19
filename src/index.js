@@ -1,5 +1,5 @@
 import './css/styles.css';
-import CountryApi from './components/fetchCountries'
+import { CountryApi } from './js/fetchCountries'
 import Notiflix from 'notiflix';
 
 const debounce = require('lodash.debounce');
@@ -14,18 +14,19 @@ const countrysApiService= new CountryApi()
 
 inputRef.addEventListener('input',debounce(onInput,DEBOUNCE_DELAY))
 
-function onInput(e){
+function onInput(e) {
 
     countrysApiService.query = e.target.value.trim();
     
     if (countrysApiService.query === '') {
-        clearListMarkup()
-        clearElementMarkup()
+        clearAllMarkup()
         return
     }
 
-countrysApiService.fetchCountries().then(renderUserList).catch(error404)
-    
+    countrysApiService.fetchCountries().then(renderUserList).catch(error => {
+        error404()
+        console.log(error);
+    })
 }
 
 
@@ -77,18 +78,25 @@ function listMurkup(countrys) {
 }
 
 function clearListMarkup() {
-    ulRef.innerHTML=''
+    ulRef.innerHTML = ''
 }
 
 function clearElementMarkup() {
     infoRef.innerHTML = '';
 }
 
+function clearAllMarkup() {
+    ulRef.innerHTML = '';
+    infoRef.innerHTML = '';
+}
+
 
 function tooManyMatchesNotify() {
+    clearAllMarkup()
     return Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");
 }
 
 function error404() {
+    clearAllMarkup()
     return Notiflix.Notify.failure("Oops, there is no country with that name");
 }
