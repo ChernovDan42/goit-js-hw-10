@@ -24,7 +24,9 @@ function onInput(e) {
     }
 
     countrysApiService.fetchCountries().then(renderUserList).catch(error => {
-        error404()
+        if (error.message = '404') {
+          error404()  
+        }
         console.log(error);
     })
 }
